@@ -2,58 +2,60 @@ import { useEffect, useRef, useState } from "react";
 import classes from "./Login.module.css";
 
 function Login() {
-  const userRef = useRef();
-  const errRef = useRef();
+  const usernameInputRef = useRef();
 
   const [username, setUsername] = useState("");
+
   const [pwd, setPwd] = useState("");
 
   const [errMsg, setErrMsg] = useState("");
-  const [success, setSuccess] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
 
   useEffect(() => {
-    userRef.current?.focus();
+    usernameInputRef.current?.focus();
   }, []);
 
   return (
     <>
-      {success ? (
+      {isSuccess ? (
         <section>
           <h1>You are logged in!</h1>
           <br />
-          Go to home
+          <p>Go to Home!</p>
         </section>
       ) : (
         <section>
-          <p ref={errRef} className={errMsg ? classes.error_mes : "offscreen"}>
-            {errMsg}
-          </p>
+          <p className={errMsg ? classes.errmsg : "offscreen"}>{errMsg}</p>
           <h1>Sign In</h1>
+
           <form>
-            <label htmlFor="username">User Name:</label>
+            <label htmlFor="username">Username:</label>
             <input
               type="text"
               id="username"
-              ref={userRef}
+              ref={usernameInputRef}
               autoComplete="off"
               onChange={(e) => setUsername(e.target.value)}
               value={username}
               required
             />
-            <label htmlFor="password">Password:</label>
+
+            <label htmlFor="pwd">Password:</label>
             <input
               type="password"
-              id="passwsord"
+              id="pwd"
               onChange={(e) => setPwd(e.target.value)}
               value={pwd}
               required
             />
-            <button type="submit" disabled={!username || !pwd}>
+
+            <button type="submit" disabled={!username || !pwd ? true : false}>
               Sign In
             </button>
           </form>
+
           <p>
-            Need an account? <br />
+            Need an Account? <br />
             Sign Up
           </p>
         </section>

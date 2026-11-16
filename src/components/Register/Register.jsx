@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useRef, useEffect, useState, use } from "react";
 import classes from "./Register.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -11,42 +11,41 @@ const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 
 function Register() {
-  const userRef = useRef();
+  const usernameInputRef = useRef();
 
   const [username, setUsername] = useState("");
-  const [isValidUsername, setIsValidUsername] = useState(false);
+  const [isUsernameValid, setIsUsernameValid] = useState(false);
   const [isUsernameFocused, setIsUsernameFocused] = useState(false);
 
   const [pwd, setPwd] = useState("");
-  const [isValidPwd, setIsValidPwd] = useState(false);
+  const [isPwdValid, setIsPwdValid] = useState(false);
   const [isPwdFocused, setIsPwdFocused] = useState(false);
 
-  const [matchPwd, setMatchPwd] = useState("");
-  const [isValidMatchPwd, setIsValidMatchPwd] = useState(false);
-  const [isMatchPwdFocused, setIsMatchPwdFocused] = useState(false);
+  const [confirmPwd, setConfirmPwd] = useState("");
+  const [isConfirmPwdValid, setIsConfirmPwdValid] = useState(false);
+  const [isConfirmPwdFocused, setIsConfirmPwdFocused] = useState(false);
 
-  const [errMsg, setErrorMsg] = useState("");
-  const [success, setSuccess] = useState(false);
+  const [errMsg, setErrMsg] = useState("");
+  const [isSuccess, setIsSuccess] = useState(true);
 
   useEffect(() => {
-    userRef.current?.focus();
+    usernameInputRef.current?.focus();
   }, []);
 
   useEffect(() => {
-    const isUsernameValid = USER_REGEX.test(username);
-    setIsValidUsername(isUsernameValid);
+    const isUsernameRegexValid = USER_REGEX.test(username);
+    setIsUsernameValid(isUsernameRegexValid);
   }, [username]);
 
   useEffect(() => {
-    const isPwdValid = PWD_REGEX.test(pwd);
-
-    setIsValidPwd(isPwdValid);
-    setIsValidMatchPwd(pwd === matchPwd);
-  }, [pwd, matchPwd]);
+    const isPwdRegexValid = PWD_REGEX.test(pwd);
+    setIsPwdValid(isPwdRegexValid);
+    setIsConfirmPwdValid(pwd === confirmPwd);
+  }, [pwd, confirmPwd]);
 
   return (
     <>
-      {success ? (
+      {isSuccess ? (
         <section>
           <h1>Success!</h1>
           <p>Sign In</p>
@@ -55,37 +54,40 @@ function Register() {
         <section>
           <p className={errMsg ? classes.errmsg : "offscreen"}>{errMsg}</p>
           <h1>Register</h1>
+
           <form>
             <label htmlFor="username">
               Username:
               <FontAwesomeIcon
                 icon={faCheck}
-                className={isValidUsername ? classes.valid : classes.hide}
+                className={isUsernameValid ? classes.valid : classes.hide}
               />
               <FontAwesomeIcon
                 icon={faTimes}
                 className={
-                  isValidUsername || !username ? classes.hide : classes.invalid
+                  isUsernameValid || !username ? classes.hide : classes.invalid
                 }
               />
             </label>
             <input
               type="text"
               id="username"
-              ref={userRef}
-              onChange={(e) => {
-                setUsername(e.target.value);
-              }}
-              onFocus={() => setIsUsernameFocused(true)}
-              onBlur={() => setIsUsernameFocused(false)}
+              ref={usernameInputRef}
               autoComplete="off"
-              required
+              onChange={(e) => setUsername(e.target.value)}
+              onFocus={() => {
+                setIsUsernameFocused(true);
+              }}
+              onBlur={() => {
+                setIsUsernameFocused(false);
+              }}
               value={username}
+              required
             />
             <p
               id="uinote"
               className={
-                isUsernameFocused && username && !isValidUsername
+                isUsernameFocused && username && !isUsernameValid
                   ? classes.instructions
                   : "offscreen"
               }
@@ -98,33 +100,34 @@ function Register() {
               Letters, numbers, underscores, hyphens allowed.
             </p>
 
-            <label htmlFor="password">
+            <label htmlFor="pwd">
               Password:
               <FontAwesomeIcon
                 icon={faCheck}
-                className={isValidPwd ? classes.valid : classes.hide}
+                className={isPwdValid ? classes.valid : classes.hide}
               />
               <FontAwesomeIcon
                 icon={faTimes}
-                className={isValidPwd || !pwd ? classes.hide : classes.invalid}
+                className={isPwdValid || !pwd ? classes.hide : classes.invalid}
               />
             </label>
             <input
               type="password"
-              id="password"
-              onChange={(e) => {
-                setPwd(e.target.value);
+              id="pwd"
+              onChange={(e) => setPwd(e.target.value)}
+              onFocus={() => {
+                setIsPwdFocused(true);
               }}
-              onFocus={() => setIsPwdFocused(true)}
-              onBlur={() => setIsPwdFocused(false)}
+              onBlur={() => {
+                setIsPwdFocused(false);
+              }}
               value={pwd}
               required
             />
-
             <p
               id="pwdnote"
               className={
-                isPwdFocused && pwd && !isValidPwd
+                isPwdFocused && pwd && !isPwdValid
                   ? classes.instructions
                   : "offscreen"
               }
@@ -145,32 +148,37 @@ function Register() {
               <FontAwesomeIcon
                 icon={faCheck}
                 className={
-                  matchPwd && isValidMatchPwd ? classes.valid : classes.hide
+                  isConfirmPwdFocused && isConfirmPwdValid && confirmPwd
+                    ? classes.valid
+                    : classes.hide
                 }
               />
               <FontAwesomeIcon
                 icon={faTimes}
                 className={
-                  isValidMatchPwd || !matchPwd ? classes.hide : classes.invalid
+                  isConfirmPwdValid || !confirmPwd
+                    ? classes.hide
+                    : classes.invalid
                 }
               />
             </label>
             <input
               type="password"
               id="confirm_pwd"
-              onChange={(e) => {
-                setMatchPwd(e.target.value);
+              onChange={(e) => setConfirmPwd(e.target.value)}
+              onFocus={() => {
+                setIsConfirmPwdFocused(true);
               }}
-              onFocus={() => setIsMatchPwdFocused(true)}
-              onBlur={() => setIsMatchPwdFocused(false)}
-              value={matchPwd}
+              onBlur={() => {
+                setIsConfirmPwdFocused(false);
+              }}
+              value={confirmPwd}
               required
             />
-
             <p
-              id="confirmnote"
+              id="confirmpwdnote"
               className={
-                isMatchPwdFocused && matchPwd && !isValidMatchPwd
+                confirmPwd && !isConfirmPwdValid
                   ? classes.instructions
                   : "offscreen"
               }
@@ -180,8 +188,9 @@ function Register() {
             </p>
 
             <button
+              type="submit"
               disabled={
-                !isValidUsername || !isValidPwd || !isValidMatchPwd
+                !isUsernameValid || isPwdValid || isConfirmPwdValid
                   ? true
                   : false
               }
@@ -189,9 +198,10 @@ function Register() {
               Sign up
             </button>
           </form>
+
           <p>
             Already registered? <br />
-            Sign In
+            Sign in
           </p>
         </section>
       )}
