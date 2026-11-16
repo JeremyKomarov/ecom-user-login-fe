@@ -11,6 +11,17 @@ function Login() {
   const [errMsg, setErrMsg] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const userBody = {
+      username: username,
+      password: pwd,
+    };
+
+    console.log(userBody);
+  };
+
   useEffect(() => {
     usernameInputRef.current?.focus();
   }, []);
@@ -28,7 +39,7 @@ function Login() {
           <p className={errMsg ? classes.errmsg : "offscreen"}>{errMsg}</p>
           <h1>Sign In</h1>
 
-          <form>
+          <form onSubmit={handleSubmit}>
             <label htmlFor="username">Username:</label>
             <input
               type="text"

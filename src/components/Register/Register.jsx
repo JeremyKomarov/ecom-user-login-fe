@@ -26,7 +26,25 @@ function Register() {
   const [isConfirmPwdFocused, setIsConfirmPwdFocused] = useState(false);
 
   const [errMsg, setErrMsg] = useState("");
-  const [isSuccess, setIsSuccess] = useState(true);
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const usernameValueRegex = USER_REGEX.test(username);
+    const pwdValueRegex = PWD_REGEX.test(pwd);
+
+    if (!usernameValueRegex || !pwdValueRegex) {
+      setErrMsg("Invalid Entry");
+    }
+
+    const newUserBody = {
+      username: username,
+      password: pwd,
+    };
+
+    console.log(newUsernameBody);
+  };
 
   useEffect(() => {
     usernameInputRef.current?.focus();
@@ -55,7 +73,7 @@ function Register() {
           <p className={errMsg ? classes.errmsg : "offscreen"}>{errMsg}</p>
           <h1>Register</h1>
 
-          <form>
+          <form onSubmit={handleSubmit}>
             <label htmlFor="username">
               Username:
               <FontAwesomeIcon
@@ -190,7 +208,7 @@ function Register() {
             <button
               type="submit"
               disabled={
-                !isUsernameValid || isPwdValid || isConfirmPwdValid
+                !isUsernameValid || !isPwdValid || !isConfirmPwdValid
                   ? true
                   : false
               }
