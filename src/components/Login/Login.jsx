@@ -1,17 +1,20 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import classes from "./Login.module.css";
+import { authenticate } from "../services/api";
+import AuthContext from "../context/AuthProvider";
 
 function Login() {
   const usernameInputRef = useRef();
+  const errMsElRef = useRef();
+  const { setAuth } = useContext(AuthContext);
 
   const [username, setUsername] = useState("");
-
   const [pwd, setPwd] = useState("");
 
   const [errMsg, setErrMsg] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const userBody = {
@@ -19,7 +22,23 @@ function Login() {
       password: pwd,
     };
 
-    console.log(userBody);
+    try {
+      const res = await authenticate(userBody);
+      setAuth(res.data.jwt);
+
+      setIsSuccess(true);
+      setUsername("");
+      setPwd("");
+    } catch (e) {
+      if (!e.response) {
+        setErrMsg("No Server Response");
+      } else if (e.response.status == 403) {
+        setErrMsg(e.response.data);
+      } else {
+        setErrMsg("Login Failed");
+      }
+      errMsElRef.current.focus();
+    }
   };
 
   useEffect(() => {
@@ -36,7 +55,9 @@ function Login() {
         </section>
       ) : (
         <section>
-          <p className={errMsg ? classes.errmsg : "offscreen"}>{errMsg}</p>
+          <p ref={errMsElRef} className={errMsg ? classes.errmsg : "offscreen"}>
+            {errMsg}
+          </p>
           <h1>Sign In</h1>
 
           <form onSubmit={handleSubmit}>

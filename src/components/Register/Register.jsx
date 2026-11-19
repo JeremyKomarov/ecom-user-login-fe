@@ -6,6 +6,7 @@ import {
   faTimes,
   faInfoCircle,
 } from "@fortawesome/free-solid-svg-icons";
+import { createUser } from "../services/api";
 
 const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
@@ -28,7 +29,7 @@ function Register() {
   const [errMsg, setErrMsg] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const usernameValueRegex = USER_REGEX.test(username);
@@ -43,7 +44,11 @@ function Register() {
       password: pwd,
     };
 
-    console.log(newUsernameBody);
+    try {
+      const res = await createUser(newUserBody);
+
+      setIsSuccess(true);
+    } catch (e) {}
   };
 
   useEffect(() => {
