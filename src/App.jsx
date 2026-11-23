@@ -1,6 +1,6 @@
 import Navbar from "./components/Navbar/Navbar";
 import Home from "./components/example/Home";
-import Profile from "./components/example/Profile";
+import Profile from "./components/Profile/Profile";
 import About from "./components/example/About";
 import Login from "./components/Login/Login";
 import Register from "./components/Register/Register";

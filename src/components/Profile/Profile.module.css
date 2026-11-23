@@ -1,0 +1,50 @@
+.profile {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 1rem;
+  margin: 2rem auto;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.profile form {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 1rem;
+}
+
+.profile input[type="text"],
+.profile button {
+  font-family: "Nunito", sans-serif;
+  font-size: 22px;
+  padding: 0.25rem;
+  border-radius: 0.5rem;
+}
+
+.profile label,
+.profile button {
+  margin-top: 1rem;
+}
+
+.profile button {
+  padding: 0.5rem;
+  cursor: pointer;
+}
+
+.errmsg {
+  background-color: lightpink;
+  color: firebrick;
+  font-weight: bold;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.successmsg {
+  background-color: lightgreen;
+  color: darkgreen;
+  font-weight: bold;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+}
