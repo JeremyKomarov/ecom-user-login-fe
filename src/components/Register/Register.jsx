@@ -7,6 +7,7 @@ import {
   faInfoCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import { createUser } from "../services/api";
+import { Link } from "react-router-dom";
 
 const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
@@ -71,7 +72,7 @@ function Register() {
       {isSuccess ? (
         <section>
           <h1>Success!</h1>
-          <p>Sign In</p>
+          <Link to="/login">Sign In</Link>
         </section>
       ) : (
         <section>

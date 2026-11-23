@@ -1,14 +1,31 @@
+import { useContext } from "react";
 import classes from "./Navbar.module.css";
-import { Link, useMatch, useResolvedPath } from "react-router-dom";
+import AuthContext from "../context/AuthProvider";
+import { Link, useMatch, useNavigate, useResolvedPath } from "react-router-dom";
 
 function Navbar() {
+  const { auth, setAuth } = useContext(AuthContext);
+
+  const handleLogout = () => {
+    setAuth(null);
+  };
+
   return (
     <nav className={classes.nav}>
       <Link to="/">Home</Link>
 
       <ul>
-        <CustomLink to="/login">Login</CustomLink>
-        <CustomLink to="/register">Register</CustomLink>
+        {auth ? (
+          <Link to="/login" onClick={handleLogout}>
+            Logout
+          </Link>
+        ) : (
+          <>
+            <CustomLink to="/login">Login</CustomLink>
+            <CustomLink to="/register">Register</CustomLink>
+          </>
+        )}
+
         <CustomLink to="/profile">Profile</CustomLink>
         <CustomLink to="/about">About</CustomLink>
       </ul>

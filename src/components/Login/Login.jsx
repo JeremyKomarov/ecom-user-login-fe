@@ -2,17 +2,17 @@ import { useContext, useEffect, useRef, useState } from "react";
 import classes from "./Login.module.css";
 import { authenticate } from "../services/api";
 import AuthContext from "../context/AuthProvider";
+import { Link } from "react-router-dom";
 
 function Login() {
   const usernameInputRef = useRef();
   const errMsElRef = useRef();
-  const { setAuth } = useContext(AuthContext);
+  const { auth, setAuth } = useContext(AuthContext);
 
   const [username, setUsername] = useState("");
   const [pwd, setPwd] = useState("");
 
   const [errMsg, setErrMsg] = useState("");
-  const [isSuccess, setIsSuccess] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,7 +26,6 @@ function Login() {
       const res = await authenticate(userBody);
       setAuth(res.data.jwt);
 
-      setIsSuccess(true);
       setUsername("");
       setPwd("");
     } catch (e) {
@@ -47,11 +46,11 @@ function Login() {
 
   return (
     <>
-      {isSuccess ? (
+      {auth ? (
         <section>
           <h1>You are logged in!</h1>
           <br />
-          <p>Go to Home!</p>
+          <Link to="/">Go to Home!</Link>
         </section>
       ) : (
         <section>
