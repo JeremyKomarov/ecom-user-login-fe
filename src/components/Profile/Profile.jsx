@@ -1,7 +1,12 @@
 import { useContext, useEffect, useState } from "react";
 import classes from "./Profile.module.css";
 import AuthContext from "../context/AuthProvider";
-import { getProfile } from "../services/api";
+import {
+  createProfile,
+  deleteProfile,
+  getProfile,
+  updateProfile,
+} from "../services/api";
 import { Link } from "react-router-dom";
 
 const EMPTY_PROFILE = {
@@ -15,8 +20,10 @@ const EMPTY_PROFILE = {
 function Profile() {
   const { auth } = useContext(AuthContext);
 
+  const [username, setUsername] = useState("");
+  const [roles, setRoles] = useState("");
   const [profile, setProfile] = useState(EMPTY_PROFILE);
-  const [hasProfile, setHasProfile] = useState(true);
+  const [hasProfile, setHasProfile] = useState(false);
 
   const [errMsg, setErrMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
@@ -26,6 +33,8 @@ function Profile() {
   });
 
   const applyProfile = (profile) => {
+    setUsername(profile.username);
+    setRoles(profile.roles);
     setHasProfile(profile.profile != null);
     setProfile(
       profile.profile
@@ -42,6 +51,49 @@ function Profile() {
       setErrMsg("Please log in again");
     } else {
       setErrMsg(e.response.data);
+    }
+  };
+
+  const handleChange = (e) => {
+    const key = e.target.name;
+    const value = e.target.value;
+    setProfile({ ...profile, [key]: value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const profileBody = {
+      firstName: profile.firstName,
+      lastName: profile.lastName,
+      email: profile.email,
+      phone: profile.phone,
+      address: profile.address,
+    };
+
+    try {
+      const res = hasProfile
+        ? await updateProfile(profileBody, authHeaders())
+        : await createProfile(profileBody, authHeaders());
+
+      applyProfile(res.data);
+      setErrMsg("");
+      setSuccessMsg(hasProfile ? "Details updated" : "Details Created");
+    } catch (e) {
+      handleError(e);
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      await deleteProfile(authHeaders());
+
+      setHasProfile(false);
+      setProfile(EMPTY_PROFILE);
+      setErrMsg("");
+      setSuccessMsg("Details deleted");
+    } catch (e) {
+      handleError(e);
     }
   };
 
@@ -70,26 +122,63 @@ function Profile() {
       </p>
 
       <h1>Profile</h1>
+      <p>
+        {username} ({roles})
+      </p>
 
-      <form>
+      <form onSubmit={handleSubmit}>
         <label htmlFor="firstName">First Name:</label>
-        <input type="text" id="firstName" value={profile.firstName} />
+        <input
+          type="text"
+          id="firstName"
+          name="firstName"
+          onChange={handleChange}
+          value={profile.firstName}
+        />
 
         <label htmlFor="lastName">Last Name:</label>
-        <input type="text" id="lastName" value={profile.lastName} />
+        <input
+          type="text"
+          id="lastName"
+          name="lastName"
+          onChange={handleChange}
+          value={profile.lastName}
+        />
 
         <label htmlFor="email">Email:</label>
-        <input type="text" id="email" value={profile.email} />
+        <input
+          type="text"
+          id="email"
+          name="email"
+          onChange={handleChange}
+          value={profile.email}
+        />
 
         <label htmlFor="phone">Phone:</label>
-        <input type="text" id="phone" value={profile.phone} />
+        <input
+          type="text"
+          id="phone"
+          name="phone"
+          onChange={handleChange}
+          value={profile.phone}
+        />
 
         <label htmlFor="address">Address:</label>
-        <input type="text" id="address" value={profile.address} />
+        <input
+          type="text"
+          id="address"
+          name="address"
+          onChange={handleChange}
+          value={profile.address}
+        />
 
         <button type="submit">{hasProfile ? "Update" : "Create"}</button>
 
-        {hasProfile && <button type="button">Delete</button>}
+        {hasProfile && (
+          <button type="button" onClick={handleDelete}>
+            Delete
+          </button>
+        )}
       </form>
     </section>
   );

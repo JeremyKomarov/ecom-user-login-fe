@@ -20,3 +20,15 @@ export const testApiRoute1 = (params) => {
 export const getProfile = (params) => {
   return axios.get(PROFILE(), { headers: params });
 };
+
+export const createProfile = (profileBody, params) => {
+  return axios.post(PROFILE(), profileBody, { headers: params });
+};
+
+export const updateProfile = (profileBody, params) => {
+  return axios.put(PROFILE(), profileBody, { headers: params });
+};
+
+export const deleteProfile = (params) => {
+  return axios.delete(PROFILE(), { headers: params });
+};
